@@ -1,35 +1,51 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect, useCallback } from 'react';
+import { searchImages } from './api/unsplash';
 import SearchBar from './components/SearchBar';
 import ImageCard from './components/ImageCard';
 
 const App = () => {
   const [images, setImages] = useState([]);
   const [term, setTerm] = useState('cats');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const fetchImages = useCallback(async (searchTerm) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const results = await searchImages(searchTerm);
+      setImages(results);
+    } catch (err) {
+      setError('Failed to fetch images. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    const search = async () => {
-      const response = await axios.get('https://api.unsplash.com/search/photos', {
-        headers: {
-          Authorization: `Client-ID ${process.env.REACT_APP_UNSPLASH_ACCESS_KEY}`,
-        },
-        params: {
-          query: term,
-        },
-      });
-      setImages(response.data.results);
-    };
-    search();
-  }, [term]);
+    fetchImages(term);
+  }, [term, fetchImages]);
 
-  return (
-    <div className="app">
-      <SearchBar onSubmit={setTerm} />
+  const renderContent = () => {
+    if (loading) {
+      return <p>Loading...</p>;
+    }
+    if (error) {
+      return <p>{error}</p>;
+    }
+    return (
       <div className="image-grid">
         {images.map((image) => (
           <ImageCard key={image.id} image={image} />
         ))}
       </div>
+    );
+  };
+
+  return (
+    <div className="app">
+      <SearchBar onSubmit={setTerm} />
+      {renderContent()}
     </div>
   );
 };

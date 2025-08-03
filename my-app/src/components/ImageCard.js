@@ -5,9 +5,9 @@ const ImageCard = ({ image }) => {
 
   return (
     <div className="image-card">
-      <img src={urls.regular} alt={description} />
+      <img src={urls.regular} alt={description || 'Image'} />
       <div className="image-details">
-        <p>{description}</p>
+        {description && <p>{description}</p>}
         <p>By: {user.name}</p>
       </div>
     </div>
