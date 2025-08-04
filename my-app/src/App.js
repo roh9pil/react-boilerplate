@@ -1,29 +1,17 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { searchImages } from './api/unsplash';
+import React, { useState, useEffect } from 'react';
+import useImages from './hooks/useImages';
 import SearchBar from './components/SearchBar';
 import ImageCard from './components/ImageCard';
+import styles from './App.module.css';
 
 const App = () => {
-  const [images, setImages] = useState([]);
   const [term, setTerm] = useState('cats');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  const fetchImages = useCallback(async (searchTerm) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const results = await searchImages(searchTerm);
-      setImages(results);
-    } catch (err) {
-      setError('Failed to fetch images. Please try again later.');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const { images, loading, error, fetchImages } = useImages();
 
   useEffect(() => {
-    fetchImages(term);
+    if (term) {
+      fetchImages(term);
+    }
   }, [term, fetchImages]);
 
   const renderContent = () => {
@@ -34,7 +22,7 @@ const App = () => {
       return <p>{error}</p>;
     }
     return (
-      <div className="image-grid">
+      <div className={styles.imageGrid}>
         {images.map((image) => (
           <ImageCard key={image.id} image={image} />
         ))}
@@ -43,7 +31,7 @@ const App = () => {
   };
 
   return (
-    <div className="app">
+    <div className={styles.app}>
       <SearchBar onSubmit={setTerm} />
       {renderContent()}
     </div>
