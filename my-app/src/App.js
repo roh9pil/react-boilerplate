@@ -6,7 +6,7 @@ import styles from './App.module.css';
 
 const App = () => {
   const [term, setTerm] = useState('cats');
-  const { images, loading, error, fetchImages } = useImages();
+  const { images, loading, error, fetchImages, loadMore, hasMore } = useImages();
 
   useEffect(() => {
     if (term) {
@@ -15,18 +15,26 @@ const App = () => {
   }, [term, fetchImages]);
 
   const renderContent = () => {
-    if (loading) {
+    if (loading && images.length === 0) {
       return <p>Loading...</p>;
     }
     if (error) {
       return <p>{error}</p>;
     }
     return (
-      <div className={styles.imageGrid}>
-        {images.map((image) => (
-          <ImageCard key={image.id} image={image} />
-        ))}
-      </div>
+      <>
+        <div className={styles.imageGrid}>
+          {images.map((image) => (
+            <ImageCard key={image.id} image={image} />
+          ))}
+        </div>
+        {loading && images.length > 0 && <p>Loading more...</p>}
+        {hasMore && !loading && (
+          <button onClick={loadMore} className={styles.loadMoreButton}>
+            Load More
+          </button>
+        )}
+      </>
     );
   };
 
