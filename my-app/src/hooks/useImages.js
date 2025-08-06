@@ -7,16 +7,18 @@ const useImages = () => {
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [currentTerm, setCurrentTerm] = useState('');
+  const [currentSortBy, setCurrentSortBy] = useState('relevant');
   const [hasMore, setHasMore] = useState(true);
 
-  const fetchImages = useCallback(async (searchTerm) => {
+  const fetchImages = useCallback(async (searchTerm, sortBy = 'relevant') => {
     setCurrentTerm(searchTerm);
+    setCurrentSortBy(sortBy);
     setPage(1);
     setLoading(true);
     setError(null);
     setImages([]);
     try {
-      const results = await searchImages(searchTerm, 1);
+      const results = await searchImages(searchTerm, 1, sortBy);
       setImages(results);
       setHasMore(results.length > 0);
     } catch (err) {
@@ -33,7 +35,7 @@ const useImages = () => {
     setPage(nextPage);
     setLoading(true);
     try {
-      const results = await searchImages(currentTerm, nextPage);
+      const results = await searchImages(currentTerm, nextPage, currentSortBy);
       setImages(prevImages => [...prevImages, ...results]);
       setHasMore(results.length > 0);
     } catch (err) {
@@ -41,7 +43,7 @@ const useImages = () => {
     } finally {
       setLoading(false);
     }
-  }, [currentTerm, page, loading, hasMore]);
+  }, [currentTerm, page, loading, hasMore, currentSortBy]);
 
   return { images, loading, error, fetchImages, loadMore, hasMore };
 };
