@@ -78,16 +78,60 @@ document.addEventListener('DOMContentLoaded', () => {
         paginationControlsContainer.innerHTML = '';
         if (data.total_pages <= 1) return;
 
+        // '이전' 버튼
         const prevButton = document.createElement('button');
         prevButton.textContent = '이전';
         prevButton.disabled = !data.has_prev;
         prevButton.addEventListener('click', () => fetchTables(data.current_page - 1));
         paginationControlsContainer.appendChild(prevButton);
 
-        const pageInfo = document.createElement('span');
-        pageInfo.textContent = ` ${data.current_page} / ${data.total_pages} `;
-        paginationControlsContainer.appendChild(pageInfo);
+        // 페이지 번호 버튼
+        const pagesToShow = 5; // 한 번에 보여줄 페이지 번호 개수
+        let startPage = Math.max(1, data.current_page - Math.floor(pagesToShow / 2));
+        let endPage = Math.min(data.total_pages, startPage + pagesToShow - 1);
 
+        if (endPage - startPage + 1 < pagesToShow) {
+            startPage = Math.max(1, endPage - pagesToShow + 1);
+        }
+        
+        // 시작 페이지가 1보다 크면 ... 표시
+        if (startPage > 1) {
+            const firstButton = document.createElement('button');
+            firstButton.textContent = '1';
+            firstButton.addEventListener('click', () => fetchTables(1));
+            paginationControlsContainer.appendChild(firstButton);
+            if (startPage > 2) {
+                const ellipsis = document.createElement('span');
+                ellipsis.textContent = '...';
+                paginationControlsContainer.appendChild(ellipsis);
+            }
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            const pageButton = document.createElement('button');
+            pageButton.textContent = i;
+            if (i === data.current_page) {
+                pageButton.disabled = true; // 현재 페이지는 비활성화
+            }
+            pageButton.addEventListener('click', () => fetchTables(i));
+            paginationControlsContainer.appendChild(pageButton);
+        }
+
+        // 마지막 페이지가 총 페이지 수보다 작으면 ... 표시
+        if (endPage < data.total_pages) {
+            if (endPage < data.total_pages - 1) {
+                const ellipsis = document.createElement('span');
+                ellipsis.textContent = '...';
+                paginationControlsContainer.appendChild(ellipsis);
+            }
+            const lastButton = document.createElement('button');
+            lastButton.textContent = data.total_pages;
+            lastButton.addEventListener('click', () => fetchTables(data.total_pages));
+            paginationControlsContainer.appendChild(lastButton);
+        }
+
+
+        // '다음' 버튼
         const nextButton = document.createElement('button');
         nextButton.textContent = '다음';
         nextButton.disabled = !data.has_next;
