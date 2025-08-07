@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const tableListContainer = document.getElementById('table-list');
+    const paginationControlsContainer = document.getElementById('pagination-controls');
     const tableDetailView = document.getElementById('table-detail-view');
     const backToListBtn = document.getElementById('back-to-list-btn');
     const currentTableNameElem = document.getElementById('current-table-name');
@@ -15,9 +16,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const applyFilterBtn = document.getElementById('apply-filter-btn');
 
     let currentTableName = null; // 현재 보고 있는 테이블 이름
+    let currentPage = 1;
 
     // 테이블 목록 불러오기
-    async function fetchTables() {
+    async function fetchTables(page = 1) {
+        currentPage = page;
         // 검색어와 필터 값 가져오기
         const searchQuery = searchInput.value;
         const selectedStatus = statusFilter.value;
@@ -30,17 +33,20 @@ document.addEventListener('DOMContentLoaded', () => {
         if (selectedStatus && selectedStatus !== 'all') {
             params.append('status', selectedStatus);
         }
+        params.append('page', page);
+        params.append('per_page', 10); // 페이지당 10개 항목
 
         const queryString = params.toString();
-        const url = `/api/tables${queryString ? '?' + queryString : ''}`; // 쿼리 스트링 추가
+        const url = `/tables?${queryString}`;
 
         try {
             const response = await fetch(url); // 수정된 URL 사용
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            const tables = await response.json();
-            displayTables(tables);
+            const data = await response.json();
+            displayTables(data.tables);
+            displayPagination(data);
         } catch (error) {
             console.error('테이블 목록을 불러오는 데 실패했습니다:', error);
             tableListContainer.innerHTML = '<p style="color: red;">테이블 목록을 불러올 수 없습니다. 백엔드 서버가 실행 중인지 확인하세요.</p>';
@@ -67,6 +73,28 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // 페이지네이션 컨트롤 표시
+    function displayPagination(data) {
+        paginationControlsContainer.innerHTML = '';
+        if (data.total_pages <= 1) return;
+
+        const prevButton = document.createElement('button');
+        prevButton.textContent = '이전';
+        prevButton.disabled = !data.has_prev;
+        prevButton.addEventListener('click', () => fetchTables(data.current_page - 1));
+        paginationControlsContainer.appendChild(prevButton);
+
+        const pageInfo = document.createElement('span');
+        pageInfo.textContent = ` ${data.current_page} / ${data.total_pages} `;
+        paginationControlsContainer.appendChild(pageInfo);
+
+        const nextButton = document.createElement('button');
+        nextButton.textContent = '다음';
+        nextButton.disabled = !data.has_next;
+        nextButton.addEventListener('click', () => fetchTables(data.current_page + 1));
+        paginationControlsContainer.appendChild(nextButton);
+    }
+
     // 상태 텍스트 변환 헬퍼
     function getStatusText(status) {
         switch (status) {
@@ -86,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentTableNameElem.textContent = tableName;
 
         try {
-            const response = await fetch(`/api/tables/${tableName}`);
+            const response = await fetch(`/tables/${tableName}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -146,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         try {
-            const response = await fetch(`/api/tables/${currentTableName}/save`, {
+            const response = await fetch(`/tables/${currentTableName}/save`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -176,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentTableName = null;
         tableDetailView.style.display = 'none';
         document.querySelector('.table-list-container').style.display = 'block';
-        fetchTables(); // 목록 새로고침
+        fetchTables(currentPage); // 목록 새로고침
     }
 
     // 이벤트 리스너
@@ -185,11 +213,11 @@ document.addEventListener('DOMContentLoaded', () => {
     markCompletedBtn.addEventListener('click', () => saveDescriptions('completed'));
 
     // 검색 및 필터링 이벤트 리스너 추가
-    applyFilterBtn.addEventListener('click', fetchTables); // '적용' 버튼 클릭 시 테이블 목록 다시 불러오기
+    applyFilterBtn.addEventListener('click', () => fetchTables(1)); // '적용' 버튼 클릭 시 첫 페이지부터 다시 불러오기
     // (선택 사항) 검색 입력창에서 Enter 키 누르면 필터링
     searchInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
-            fetchTables();
+            fetchTables(1);
         }
     });
 

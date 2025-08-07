@@ -121,6 +121,8 @@ def get_tables():
     # 쿼리 파라미터 가져오기
     search_query = request.args.get('search', '').strip()
     status_filter = request.args.get('status', '').strip()
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 10, type=int)
 
     # 기본 쿼리
     query = TableDescription.query
@@ -135,13 +137,22 @@ def get_tables():
         query = query.filter(TableDescription.status == status_filter)
 
     # 최종 쿼리 실행 및 결과 정렬
-    tables = query.order_by(TableDescription.table_name).all()
+    pagination = query.order_by(TableDescription.table_name).paginate(page=page, per_page=per_page, error_out=False)
+    tables = pagination.items
+    
     table_list = [{
         'table_name': t.table_name,
         'status': t.status,
         'last_updated': t.last_updated.isoformat() if t.last_updated else None
     } for t in tables]
-    return jsonify(table_list)
+    
+    return jsonify({
+        'tables': table_list,
+        'total_pages': pagination.pages,
+        'current_page': pagination.page,
+        'has_next': pagination.has_next,
+        'has_prev': pagination.has_prev
+    })
 
 @app.route('/tables/<table_name>', methods=['GET'])
 def get_table_details(table_name):
@@ -286,7 +297,8 @@ def apply_comments_to_db_api():
 if __name__ == '__main__':
     # 애플리케이션 시작 전에 데이터베이스 초기화 함수 호출
     # Flask 앱 컨텍스트를 활성화하여 SQLAlchemy 작업이 가능하게 함
-    initialize_database(app, db) # app과 db 인스턴스를 전달
+    with app.app_context():
+        initialize_database(app, db) # app과 db 인스턴스를 전달
 
     print("Flask 애플리케이션을 시작합니다...")
     app.run(debug=True, host='0.0.0.0', port=8585)
