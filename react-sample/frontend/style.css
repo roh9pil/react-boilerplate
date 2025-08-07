@@ -1,0 +1,237 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f7f6;
+    color: #333;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 20px auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 30px;
+}
+
+h2 {
+    color: #34495e;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-top: 20px;
+}
+
+h3 {
+    color: #555;
+    margin-top: 15px;
+}
+
+/* Table List */
+.table-list-container {
+    margin-bottom: 30px;
+}
+
+#table-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.table-item {
+    background-color: #ecf0f1;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 15px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.table-item:hover {
+    background-color: #e0e6e7;
+    transform: translateY(-2px);
+}
+
+.table-item h4 {
+    margin: 0 0 10px 0;
+    color: #2980b9;
+}
+
+.table-item p {
+    margin: 0;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.table-status {
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: bold;
+    align-self: flex-end; /* 오른쪽 하단 정렬 */
+    margin-top: 10px;
+}
+
+.status-pending { background-color: #f39c12; color: white; } /* 노란색 */
+.status-in_progress { background-color: #3498db; color: white; } /* 파란색 */
+.status-completed { background-color: #27ae60; color: white; } /* 초록색 */
+.status-missing { background-color: #e74c3c; color: white; } /* 빨간색 */
+
+/* Table Detail */
+#table-detail-view {
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+    margin-top: 20px;
+}
+
+#back-to-list-btn {
+    background-color: #7f8c8d;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    margin-bottom: 20px;
+    transition: background-color 0.2s ease;
+}
+
+#back-to-list-btn:hover {
+    background-color: #616c6d;
+}
+
+.section {
+    background-color: #fdfdfd;
+    border: 1px solid #eee;
+    border-radius: 7px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #444;
+}
+
+textarea {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.95em;
+    resize: vertical; /* 수직 크기 조절 허용 */
+}
+
+textarea[readonly] {
+    background-color: #e9ecef;
+    color: #666;
+    cursor: not-allowed;
+}
+
+.column-item {
+    background-color: #f7f9fa;
+    border: 1px solid #e0e6ea;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.column-item h4 {
+    margin: 0 0 5px 0;
+    color: #2c3e50;
+}
+
+.column-item p {
+    font-size: 0.9em;
+    color: #777;
+    margin-bottom: 10px;
+}
+
+.column-item textarea {
+    margin-top: 5px;
+    margin-bottom: 0; /* 마지막 textarea 마진 제거 */
+}
+
+.action-buttons {
+    text-align: right;
+    margin-top: 30px;
+}
+
+.action-buttons button {
+    padding: 12px 25px;
+    font-size: 1.1em;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 15px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+#save-progress-btn {
+    background-color: #f39c12; /* 오렌지 */
+    color: white;
+}
+
+#save-progress-btn:hover {
+    background-color: #e67e22;
+    transform: translateY(-1px);
+}
+
+#mark-completed-btn {
+    background-color: #27ae60; /* 초록 */
+    color: white;
+}
+
+#mark-completed-btn:hover {
+    background-color: #229954;
+    transform: translateY(-1px);
+}
+
+/* 검색 및 필터링 컨트롤 스타일 */
+.filter-controls {
+    display: flex; /* 요소들을 가로로 정렬 */
+    gap: 10px;     /* 요소들 사이에 간격 추가 */
+    margin-bottom: 20px;
+    align-items: center; /* 세로 중앙 정렬 */
+}
+
+.filter-controls input[type="text"],
+.filter-controls select {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+    flex-grow: 1; /* 검색 입력란이 최대한 공간을 차지하도록 */
+    max-width: 300px; /* 너무 길어지지 않도록 최대 너비 설정 */
+}
+
+.filter-controls button {
+    padding: 8px 15px;
+    background-color: #2980b9; /* 파란색 계열 */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.2s ease;
+}
+
+.filter-controls button:hover {
+    background-color: #2471a3;
+}

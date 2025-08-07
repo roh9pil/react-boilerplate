@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metacraft</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>DataReservoir 의 테이블 설명</h1>
+        <div class="table-list-container">
+            <h2>테이블 목록</h2>
+
+            <div class="filter-controls">
+                <input type="text" id="search-input" placeholder="테이블 이름 검색...">
+                <select id="status-filter">
+                    <option value="all">모든 상태</option>
+                    <option value="pending">미검토</option>
+                    <option value="in_progress">검토 중</option>
+                    <option value="completed">검토 완료</option>
+                </select>
+                <button id="apply-filter-btn">적용</button>
+            </div>
+            <div id="table-list">
+                <p>테이블을 로드 중입니다...</p>
+            </div>
+        </div>
+
+        <div class="table-detail-container" id="table-detail-view" style="display: none;">
+            <button id="back-to-list-btn">← 테이블 목록으로 돌아가기</button>
+            <h2 id="current-table-name"></h2>
+
+            <div class="section">
+                <h3>테이블 설명</h3>
+                <label for="llm-table-description">LLM이 생성한 설명:</label>
+                <textarea id="llm-table-description" rows="5" readonly></textarea>
+                
+                <label for="user-table-description">사용자 수정 설명:</label>
+                <textarea id="user-table-description" rows="5"></textarea>
+            </div>
+
+            <div class="section">
+                <h3>컬럼 설명</h3>
+                <div id="column-list">
+                    </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button id="save-progress-btn">임시 저장</button>
+                <button id="mark-completed-btn">검토 완료</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
